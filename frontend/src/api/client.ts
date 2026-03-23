@@ -13,11 +13,15 @@ const apiClient = axios.create({
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
+    const detail = error?.response?.data?.detail;
     const message: string =
-      error?.response?.data?.detail ??
-      error?.response?.data?.message ??
-      error?.message ??
-      "An unexpected error occurred.";
+      typeof detail === "string"
+        ? detail
+        : typeof detail?.detail === "string"
+        ? detail.detail
+        : error?.response?.data?.message ??
+          error?.message ??
+          "An unexpected error occurred.";
     return Promise.reject(new Error(message));
   }
 );
