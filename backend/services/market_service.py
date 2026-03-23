@@ -6,10 +6,17 @@ def get_market_stats(symbol: str) -> MarketStats:
     stats = binance_client.get_24h_stats(symbol)
     return MarketStats(
         symbol=stats["symbol"],
-        price=stats["lastPrice"],
+        lastPrice=stats["lastPrice"],
         priceChange=stats["priceChange"],
         priceChangePercent=stats["priceChangePercent"],
-        high=stats["highPrice"],
-        low=stats["lowPrice"],
+        highPrice=stats["highPrice"],
+        lowPrice=stats["lowPrice"],
+        openPrice=stats["openPrice"],
+        prevClosePrice=stats["prevClosePrice"],
+        bidPrice=stats["bidPrice"],
+        askPrice=stats["askPrice"],
         volume=stats["volume"],
+        quoteVolume=stats["quoteVolume"],
+        openTime=stats["openTime"],
+        closeTime=stats["closeTime"],
     )

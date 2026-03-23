@@ -2,7 +2,7 @@ import apiClient from "./client";
 
 export interface MarketData {
   symbol: string;
-  price: string;
+  lastPrice: string;
   priceChange: string;
   priceChangePercent: string;
   highPrice: string;

@@ -1,5 +1,5 @@
 from exchange.client import binance_client
-from schemas.account import AccountInfo, Balance, BalancesResponse
+from schemas.account import AccountInfo, Balance
 
 
 def get_account_info() -> AccountInfo:
@@ -14,9 +14,9 @@ def get_account_info() -> AccountInfo:
     )
 
 
-def get_balances() -> BalancesResponse:
+def get_balances() -> list[Balance]:
     raw_balances = binance_client.get_balances()
-    balances = [
+    return [
         Balance(
             asset=b["asset"],
             free=b["free"],
@@ -24,4 +24,3 @@ def get_balances() -> BalancesResponse:
         )
         for b in raw_balances
     ]
-    return BalancesResponse(balances=balances)
