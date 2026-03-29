@@ -2,6 +2,7 @@ interface BalanceCardProps {
   asset: string;
   free: string;
   locked: string;
+  usd_value: number | null;
 }
 
 function formatAmount(value: string): string {
@@ -14,7 +15,15 @@ function formatAmount(value: string): string {
   return num.toLocaleString(undefined, { maximumFractionDigits: 4 });
 }
 
-export default function BalanceCard({ asset, free, locked }: BalanceCardProps) {
+function formatUSD(value: number): string {
+  if (value >= 1_000_000)
+    return `$${(value / 1_000_000).toFixed(2)}M`;
+  if (value >= 1_000)
+    return `$${value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  return `$${value.toFixed(2)}`;
+}
+
+export default function BalanceCard({ asset, free, locked, usd_value }: BalanceCardProps) {
   const freeNum = parseFloat(free);
   const lockedNum = parseFloat(locked);
   const total = freeNum + lockedNum;
@@ -41,6 +50,11 @@ export default function BalanceCard({ asset, free, locked }: BalanceCardProps) {
       <div>
         <p className="text-xs text-gray-500 mb-0.5">Total</p>
         <p className="text-xl font-bold text-gray-100">{formatAmount(String(total))}</p>
+        {usd_value != null ? (
+          <p className="text-sm text-brand-400 font-mono mt-0.5">{formatUSD(usd_value)}</p>
+        ) : (
+          <p className="text-xs text-gray-600 mt-0.5">No price data</p>
+        )}
       </div>
 
       {/* Free / Locked breakdown */}

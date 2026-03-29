@@ -145,16 +145,37 @@ export default function Dashboard() {
           <p className="text-sm text-gray-500">No non-zero balances found.</p>
         )}
         {balances && activeBalances.length > 0 && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            {activeBalances.map((b) => (
-              <BalanceCard
-                key={b.asset}
-                asset={b.asset}
-                free={b.free}
-                locked={b.locked}
-              />
-            ))}
-          </div>
+          <>
+            {/* Portfolio total */}
+            {(() => {
+              const total = activeBalances.reduce(
+                (sum, b) => (b.usd_value != null ? sum + b.usd_value : sum),
+                0
+              );
+              const hasAnyPrice = activeBalances.some((b) => b.usd_value != null);
+              return hasAnyPrice ? (
+                <div className="card max-w-xs mb-4">
+                  <p className="text-xs text-gray-500 mb-1">Portfolio Value</p>
+                  <p className="text-2xl font-bold text-gray-100 font-mono">
+                    {total >= 1_000_000
+                      ? `$${(total / 1_000_000).toFixed(2)}M`
+                      : `$${total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+                  </p>
+                </div>
+              ) : null;
+            })()}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+              {activeBalances.map((b) => (
+                <BalanceCard
+                  key={b.asset}
+                  asset={b.asset}
+                  free={b.free}
+                  locked={b.locked}
+                  usd_value={b.usd_value}
+                />
+              ))}
+            </div>
+          </>
         )}
       </section>
 

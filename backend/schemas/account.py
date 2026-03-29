@@ -14,6 +14,7 @@ class Balance(BaseModel):
     asset: str
     free: str
     locked: str
+    usd_value: float | None = None
 
 
 class BalancesResponse(BaseModel):

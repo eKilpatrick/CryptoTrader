@@ -13,4 +13,4 @@ async def account() -> AccountInfo:
 
 @router.get("/balances", response_model=list[Balance])
 async def balances() -> list[Balance]:
-    return get_balances()
+    return await get_balances()

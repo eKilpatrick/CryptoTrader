@@ -14,6 +14,7 @@ export interface Balance {
   asset: string;
   free: string;
   locked: string;
+  usd_value: number | null;
 }
 
 export async function getAccount(): Promise<AccountInfo> {
