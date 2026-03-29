@@ -3,3 +3,6 @@ config.ini
 .idea
 /backend/.env
 node_modules
+.venv
+__pycache__
+frontend/package-lock.json

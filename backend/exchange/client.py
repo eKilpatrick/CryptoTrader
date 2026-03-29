@@ -107,5 +107,14 @@ class BinanceClient:
                 detail={"detail": e.message, "code": str(e.code)},
             )
 
+    def get_klines(self, symbol: str, interval: str, limit: int) -> list:
+        try:
+            return self._client.get_klines(symbol=symbol, interval=interval, limit=limit)
+        except BinanceAPIException as e:
+            raise HTTPException(
+                status_code=400,
+                detail={"detail": e.message, "code": str(e.code)},
+            )
+
 
 binance_client = BinanceClient()

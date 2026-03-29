@@ -1,9 +1,14 @@
 from fastapi import APIRouter
 
-from schemas.markets import MarketStats
-from services.market_service import get_market_stats
+from schemas.markets import MarketStats, PriceHistory
+from services.market_service import get_market_stats, get_price_history
 
 router = APIRouter()
+
+
+@router.get("/markets/{symbol}/history", response_model=PriceHistory)
+async def market_history(symbol: str, period: str = "24h") -> PriceHistory:
+    return get_price_history(symbol.upper(), period)
 
 
 @router.get("/markets/{symbol}", response_model=MarketStats)

@@ -16,3 +16,18 @@ class MarketStats(BaseModel):
     quoteVolume: str
     openTime: int
     closeTime: int
+
+
+class Candle(BaseModel):
+    time: int    # kline open time in ms
+    open: str
+    high: str
+    low: str
+    close: str
+    volume: str
+
+
+class PriceHistory(BaseModel):
+    symbol: str
+    period: str
+    candles: list[Candle]

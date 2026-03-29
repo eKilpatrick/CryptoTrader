@@ -4,7 +4,8 @@
       "Bash(dir \"C:\\\\Users\\\\ekilpatrick\\\\dev\\\\services\\\\CryptoTrader\")",
       "Bash(dir:*)",
       "Bash(cmd /c \"dir C:\\\\Users\\\\ekilpatrick\\\\dev\\\\services\\\\CryptoTrader\\\\.claude\")",
-      "Bash(cmd /c \"dir /a C:\\\\Users\\\\ekilpatrick\\\\dev\\\\services\\\\CryptoTrader\\\\.claude\" 2>&1)"
+      "Bash(cmd /c \"dir /a C:\\\\Users\\\\ekilpatrick\\\\dev\\\\services\\\\CryptoTrader\\\\.claude\" 2>&1)",
+      "Bash(find C:UsersekilpatrickdevservicesCryptoTrader.claude -type f -name *.md -o -name *.json)"
     ]
   }
 }
