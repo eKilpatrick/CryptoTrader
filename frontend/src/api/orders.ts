@@ -56,6 +56,13 @@ export async function getOrders(symbol?: string): Promise<Order[]> {
   return data;
 }
 
+export async function getOrderHistory(symbol: string, limit = 50): Promise<Order[]> {
+  const { data } = await apiClient.get<Order[]>("/orders/history", {
+    params: { symbol, limit },
+  });
+  return data;
+}
+
 export async function createOrder(
   payload: CreateOrderPayload
 ): Promise<CreateOrderResponse> {

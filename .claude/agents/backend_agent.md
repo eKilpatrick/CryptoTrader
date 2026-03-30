@@ -37,6 +37,7 @@ You own all backend logic, API design, and Binance integration.
 * Use `python-binance`
 * Wrap all Binance calls in a dedicated service/module
 * Never call Binance directly from routes
+* Consult the python_binance_agent for best practices on how to integrate with the functionality in python-binance and binance's api itself
 
 ---
 

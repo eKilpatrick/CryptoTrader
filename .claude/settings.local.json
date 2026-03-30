@@ -5,7 +5,13 @@
       "Bash(dir:*)",
       "Bash(cmd /c \"dir C:\\\\Users\\\\ekilpatrick\\\\dev\\\\services\\\\CryptoTrader\\\\.claude\")",
       "Bash(cmd /c \"dir /a C:\\\\Users\\\\ekilpatrick\\\\dev\\\\services\\\\CryptoTrader\\\\.claude\" 2>&1)",
-      "Bash(find C:UsersekilpatrickdevservicesCryptoTrader.claude -type f -name *.md -o -name *.json)"
+      "Bash(find C:UsersekilpatrickdevservicesCryptoTrader.claude -type f -name *.md -o -name *.json)",
+      "WebFetch(domain:developers.binance.com)",
+      "WebFetch(domain:python-binance.readthedocs.io)",
+      "WebSearch",
+      "Bash(cmd /c \"dir C:\\\\Users\\\\ekilpatrick\\\\dev\\\\services\\\\CryptoTrader\\\\backend /s /b 2>&1\")",
+      "Bash(python3:*)",
+      "WebFetch(domain:github.com)"
     ]
   }
 }

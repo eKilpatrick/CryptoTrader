@@ -1,5 +1,14 @@
 import apiClient from "./client";
 
+export interface TradingSymbol {
+  symbol: string;
+  baseAsset: string;
+  quoteAsset: string;
+  stepSize: string;
+  tickSize: string;
+  minNotional: string;
+}
+
 export interface MarketData {
   symbol: string;
   lastPrice: string;
@@ -41,5 +50,10 @@ export async function getPriceHistory(symbol: string, period: string): Promise<P
   const { data } = await apiClient.get<PriceHistory>(`/markets/${symbol}/history`, {
     params: { period },
   });
+  return data;
+}
+
+export async function getSymbols(): Promise<TradingSymbol[]> {
+  const { data } = await apiClient.get<TradingSymbol[]>("/symbols");
   return data;
 }

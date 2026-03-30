@@ -1,14 +1,14 @@
 import { useState, FormEvent } from "react";
 import { CreateOrderPayload, OrderSide, OrderType } from "../api/orders";
+import { TradingSymbol } from "../api/markets";
 
 interface OrderFormProps {
   onSubmit: (payload: CreateOrderPayload) => void;
   isLoading: boolean;
+  symbols?: TradingSymbol[];
 }
 
-const PRESET_SYMBOLS = ["BTCUSDT", "ETHUSDT", "BNBUSDT", "SOLUSDT", "XRPUSDT"];
-
-export default function OrderForm({ onSubmit, isLoading }: OrderFormProps) {
+export default function OrderForm({ onSubmit, isLoading, symbols }: OrderFormProps) {
   const [symbol, setSymbol] = useState("BTCUSDT");
   const [side, setSide] = useState<OrderSide>("BUY");
   const [orderType, setOrderType] = useState<OrderType>("MARKET");
@@ -63,31 +63,49 @@ export default function OrderForm({ onSubmit, isLoading }: OrderFormProps) {
         <label className="label" htmlFor="symbol">
           Symbol
         </label>
-        <div className="flex gap-2 flex-wrap mb-2">
-          {PRESET_SYMBOLS.map((s) => (
-            <button
-              key={s}
-              type="button"
-              onClick={() => setSymbol(s)}
-              className={[
-                "px-2.5 py-1 text-xs rounded-md font-medium transition-colors",
-                symbol === s
-                  ? "bg-brand-500 text-gray-950"
-                  : "bg-gray-800 text-gray-400 hover:bg-gray-700 hover:text-gray-100",
-              ].join(" ")}
-            >
-              {s}
-            </button>
-          ))}
-        </div>
-        <input
-          id="symbol"
-          className="input uppercase"
-          value={symbol}
-          onChange={(e) => setSymbol(e.target.value.toUpperCase())}
-          placeholder="e.g. BTCUSDT"
-          required
-        />
+        {symbols && symbols.length > 0 ? (
+          <select
+            id="symbol"
+            className="input"
+            value={symbol}
+            onChange={(e) => setSymbol(e.target.value)}
+            required
+          >
+            {symbols.map((s) => (
+              <option key={s.symbol} value={s.symbol}>
+                {s.baseAsset} / {s.quoteAsset}
+              </option>
+            ))}
+          </select>
+        ) : (
+          <>
+            <div className="flex gap-2 flex-wrap mb-2">
+              {["BTCUSDT", "ETHUSDT", "BNBUSDT", "SOLUSDT", "XRPUSDT"].map((s) => (
+                <button
+                  key={s}
+                  type="button"
+                  onClick={() => setSymbol(s)}
+                  className={[
+                    "px-2.5 py-1 text-xs rounded-md font-medium transition-colors",
+                    symbol === s
+                      ? "bg-brand-500 text-gray-950"
+                      : "bg-gray-800 text-gray-400 hover:bg-gray-700 hover:text-gray-100",
+                  ].join(" ")}
+                >
+                  {s}
+                </button>
+              ))}
+            </div>
+            <input
+              id="symbol"
+              className="input uppercase"
+              value={symbol}
+              onChange={(e) => setSymbol(e.target.value.toUpperCase())}
+              placeholder="e.g. BTCUSDT"
+              required
+            />
+          </>
+        )}
       </div>
 
       {/* Order Type */}

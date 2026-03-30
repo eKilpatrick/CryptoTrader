@@ -1,4 +1,15 @@
+from typing import Optional
+
 from pydantic import BaseModel
+
+
+class SymbolInfo(BaseModel):
+    symbol: str
+    baseAsset: str
+    quoteAsset: str
+    stepSize: Optional[str] = None      # LOT_SIZE filter
+    tickSize: Optional[str] = None      # PRICE_FILTER filter
+    minNotional: Optional[str] = None   # MIN_NOTIONAL filter
 
 
 class MarketStats(BaseModel):

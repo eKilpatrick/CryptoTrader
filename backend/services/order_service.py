@@ -1,5 +1,7 @@
 from typing import Optional
 
+from fastapi import HTTPException
+
 from exchange.client import binance_client
 from schemas.orders import (
     CancelOrderResponse,
@@ -7,6 +9,30 @@ from schemas.orders import (
     OrderResponse,
     PlaceOrderRequest,
 )
+
+
+def get_order_history(symbol: str, limit: int = 50) -> list[OpenOrder]:
+    if not symbol or not symbol.strip():
+        raise HTTPException(
+            status_code=422,
+            detail={"detail": "symbol is required for order history", "code": "MISSING_SYMBOL"},
+        )
+    raw_orders = binance_client.get_all_orders(symbol=symbol.upper(), limit=limit)
+    return [
+        OpenOrder(
+            orderId=o["orderId"],
+            symbol=o["symbol"],
+            status=o["status"],
+            side=o["side"],
+            type=o["type"],
+            price=o["price"],
+            origQty=o["origQty"],
+            executedQty=o["executedQty"],
+            timeInForce=o.get("timeInForce"),
+            time=o.get("time"),
+        )
+        for o in raw_orders
+    ]
 
 
 def get_open_orders(symbol: Optional[str] = None) -> list[OpenOrder]:

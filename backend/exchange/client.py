@@ -55,6 +55,15 @@ class BinanceClient:
                 detail={"detail": e.message, "code": str(e.code)},
             )
 
+    def get_all_orders(self, symbol: str, limit: int = 50) -> list[dict]:
+        try:
+            return self._client.get_all_orders(symbol=symbol, limit=limit)
+        except BinanceAPIException as e:
+            raise HTTPException(
+                status_code=400,
+                detail={"detail": e.message, "code": str(e.code)},
+            )
+
     def get_open_orders(self, symbol: Optional[str] = None) -> list[dict]:
         try:
             if symbol:
@@ -110,6 +119,15 @@ class BinanceClient:
     def get_klines(self, symbol: str, interval: str, limit: int) -> list:
         try:
             return self._client.get_klines(symbol=symbol, interval=interval, limit=limit)
+        except BinanceAPIException as e:
+            raise HTTPException(
+                status_code=400,
+                detail={"detail": e.message, "code": str(e.code)},
+            )
+
+    def get_exchange_info(self) -> dict:
+        try:
+            return self._client.get_exchange_info()
         except BinanceAPIException as e:
             raise HTTPException(
                 status_code=400,

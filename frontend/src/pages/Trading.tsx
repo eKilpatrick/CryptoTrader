@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getOrders, createOrder, cancelOrder, CreateOrderPayload } from "../api/orders";
+import { getOrders, getOrderHistory, createOrder, cancelOrder, CreateOrderPayload } from "../api/orders";
+import { getSymbols } from "../api/markets";
 import OrderForm from "../components/OrderForm";
 import OrderTable from "../components/OrderTable";
 
@@ -49,8 +50,19 @@ function SuccessBanner({ message }: { message: string }) {
 export default function Trading() {
   const queryClient = useQueryClient();
   const [filterSymbol, setFilterSymbol] = useState("");
+  const [historySymbol, setHistorySymbol] = useState("");
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const [cancelingId, setCancelingId] = useState<number | undefined>(undefined);
+
+  const {
+    data: symbols,
+    isLoading: symbolsLoading,
+    error: symbolsError,
+  } = useQuery({
+    queryKey: ["symbols"],
+    queryFn: getSymbols,
+    staleTime: 24 * 60 * 60 * 1000,
+  });
 
   const {
     data: orders,
@@ -59,6 +71,16 @@ export default function Trading() {
   } = useQuery({
     queryKey: ["orders", filterSymbol || null],
     queryFn: () => getOrders(filterSymbol.trim().toUpperCase() || undefined),
+  });
+
+  const {
+    data: orderHistory,
+    isLoading: historyLoading,
+    error: historyError,
+  } = useQuery({
+    queryKey: ["orders/history", historySymbol],
+    queryFn: () => getOrderHistory(historySymbol.trim().toUpperCase()),
+    enabled: historySymbol.trim().length > 0,
   });
 
   const createMutation = useMutation({
@@ -70,6 +92,7 @@ export default function Trading() {
         }`
       );
       queryClient.invalidateQueries({ queryKey: ["orders"] });
+      queryClient.invalidateQueries({ queryKey: ["orders/history"] });
       setTimeout(() => setSuccessMsg(null), 5000);
     },
   });
@@ -99,10 +122,7 @@ export default function Trading() {
     cancelMutation.mutate({ orderId, symbol });
   }
 
-  // Filter to open orders only for the open orders table
-  const openOrders = (orders ?? []).filter((o) =>
-    ["NEW", "PARTIALLY_FILLED"].includes(o.status)
-  );
+  const openOrders = orders ?? [];
 
   return (
     <div className="space-y-8 max-w-5xl mx-auto">
@@ -124,10 +144,17 @@ export default function Trading() {
 
       {/* Order Form */}
       <div className="max-w-md">
-        <OrderForm
-          onSubmit={handleSubmit}
-          isLoading={createMutation.isPending}
-        />
+        {symbolsLoading && <Spinner />}
+        {symbolsError && (
+          <ErrorBanner message={`Failed to load symbols: ${(symbolsError as Error).message}`} />
+        )}
+        {!symbolsLoading && (
+          <OrderForm
+            onSubmit={handleSubmit}
+            isLoading={createMutation.isPending}
+            symbols={symbols}
+          />
+        )}
       </div>
 
       {/* Open Orders */}
@@ -163,16 +190,29 @@ export default function Trading() {
         )}
       </section>
 
-      {/* All Orders */}
+      {/* Order History */}
       <section>
-        <h2 className="text-sm font-semibold uppercase tracking-wider text-gray-500 mb-3">
-          Order History
-        </h2>
-        {orders && (
+        <div className="flex items-center justify-between mb-3 flex-wrap gap-3">
+          <h2 className="text-sm font-semibold uppercase tracking-wider text-gray-500">
+            Order History
+          </h2>
+          <input
+            className="input w-40 text-sm"
+            placeholder="Symbol (e.g. DOGEUSDT)"
+            value={historySymbol}
+            onChange={(e) => setHistorySymbol(e.target.value)}
+          />
+        </div>
+        {historySymbol.trim().length === 0 && (
+          <p className="text-sm text-gray-500">Enter a symbol above to load history.</p>
+        )}
+        {historyLoading && <Spinner />}
+        {historyError && (
+          <ErrorBanner message={(historyError as Error).message} />
+        )}
+        {orderHistory && (
           <OrderTable
-            orders={(orders ?? []).filter((o) =>
-              !["NEW", "PARTIALLY_FILLED"].includes(o.status)
-            )}
+            orders={orderHistory}
             onCancel={handleCancel}
             isCanceling={cancelMutation.isPending}
             cancelingId={cancelingId}
